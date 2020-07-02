@@ -1,25 +1,48 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+title: "Assignment"
+author: "Megan Thong"
+date: "02/07/2020"
+output: html_document
 ---
 
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "C:/Users/James/Documents/JHU, R Coursera/RepData_PeerAssessment1")
+library(dplyr)
+```
 
 ## Loading and preprocessing the data
 
+The zip file of the data is already in the GitHub repo. Here, we unzip it to create a csv file:
 
+```{r load_data}
+zipFile <- "activity.zip"
+data <- "Data"
+if (!file.exists(data)) {
+  unzip(zipFile)
+}
+
+activity = read.csv("activity.csv", header=TRUE, sep=",", na.strings="NA")
+```
+
+Only preprocessing we really need to do is transform the "date" column into an actual Date format:
+
+```{r date}
+class(data$date)
+data$date = as.Date(data$date, "%Y-$m-$d")
+```
 
 ## What is mean total number of steps taken per day?
 
+In order to calculate this, we need to first exclude missing values, then sum the number of steps per day:
 
+```{r steps}
+#remove NAs
+data1 = data[!is.na(data$steps), ]
 
-## What is the average daily activity pattern?
+#calculate total number of steps each day
+group_by(data1, date) %>% summarise(total = sum(steps))
+steps_total = aggregate(steps ~ date, data = data1, sum)
+```
 
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
